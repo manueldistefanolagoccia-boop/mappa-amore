@@ -4,595 +4,165 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>La Nostra Italia ❤️</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <style>
-  :root {
-    --ink: #1a1008;
-    --parchment: #f5efe0;
-    --parchment-dark: #e8dfc8;
-    --rose: #c0392b;
-    --rose-light: #e74c3c;
-    --gold: #b8860b;
-    --gold-light: #d4a017;
-    --sage: #5a7a5a;
-    --cream: #faf6ee;
-    --shadow: rgba(26,16,8,0.15);
-  }
+:root {
+  --ink: #1a1008; --parchment: #f5efe0; --parchment-dark: #e8dfc8;
+  --rose: #c0392b; --rose-light: #e74c3c; --gold: #b8860b;
+  --gold-light: #d4a017; --sage: #5a7a5a; --cream: #faf6ee;
+  --shadow: rgba(26,16,8,0.15); --blue: #2471a3;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--ink); color:var(--ink); height:100vh; overflow:hidden; display:flex; flex-direction:column; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* HEADER */
+#header { background:linear-gradient(135deg,#1a1008,#2d1f0e,#1a1008); padding:8px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid var(--gold); flex-shrink:0; z-index:1000; gap:8px; }
+#header .title-block h1 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold-light); }
+#header .title-block p { font-size:0.6rem; color:#a89070; letter-spacing:0.1em; text-transform:uppercase; }
+#counter-block { display:flex; gap:8px; }
+.counter-pill { background:rgba(212,160,23,0.15); border:1px solid rgba(212,160,23,0.3); border-radius:20px; padding:3px 10px; text-align:center; }
+.counter-pill .num { font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold-light); display:block; line-height:1; }
+.counter-pill .lbl { font-size:0.55rem; color:#a89070; text-transform:uppercase; letter-spacing:0.08em; }
+#header-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.hbtn { background:rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.4); color:#e8a090; padding:5px 10px; border-radius:6px; font-size:0.68rem; cursor:pointer; white-space:nowrap; transition:all 0.2s; }
+.hbtn:hover { background:rgba(192,57,43,0.4); color:#fff; }
+.hbtn.gold { background:rgba(212,160,23,0.2); border-color:rgba(212,160,23,0.4); color:var(--gold-light); }
+.hbtn.gold:hover { background:rgba(212,160,23,0.4); }
+.hbtn.green { background:rgba(39,174,96,0.2); border-color:rgba(39,174,96,0.4); color:#6de0a0; }
+.hbtn.green:hover { background:rgba(39,174,96,0.4); }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--ink);
-    color: var(--ink);
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
+/* LAYOUT */
+#main { display:flex; flex:1; overflow:hidden; }
 
-  /* HEADER */
-  #header {
-    background: linear-gradient(135deg, #1a1008 0%, #2d1f0e 50%, #1a1008 100%);
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 2px solid var(--gold);
-    flex-shrink: 0;
-    z-index: 1000;
-  }
+/* SIDEBAR */
+#sidebar { width:280px; background:var(--parchment); border-right:2px solid var(--parchment-dark); display:flex; flex-direction:column; overflow:hidden; flex-shrink:0; }
+#search-area { padding:12px; background:var(--parchment-dark); border-bottom:1px solid #d5c9a8; }
+#search-area input { width:100%; padding:8px 12px; border:1.5px solid #c8b890; border-radius:8px; font-family:'Inter',sans-serif; font-size:0.8rem; background:var(--cream); color:var(--ink); outline:none; }
+#search-area input:focus { border-color:var(--gold); }
+#filter-tabs { display:flex; gap:3px; margin-top:7px; flex-wrap:wrap; }
+.ftab { font-size:0.62rem; padding:3px 8px; border-radius:10px; border:1px solid #c8b890; background:transparent; color:#7a6840; cursor:pointer; transition:all 0.2s; }
+.ftab.active { background:var(--rose); border-color:var(--rose); color:#fff; }
+#list-header { padding:8px 12px 5px; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:#8a7040; border-bottom:1px solid #e0d4b0; display:flex; justify-content:space-between; flex-shrink:0; }
+#places-list { overflow-y:auto; flex:1; }
+#places-list::-webkit-scrollbar { width:3px; }
+#places-list::-webkit-scrollbar-thumb { background:#c8b890; border-radius:2px; }
+.place-item { padding:9px 12px; border-bottom:1px solid #e8dfc8; cursor:pointer; display:flex; align-items:flex-start; gap:8px; transition:background 0.15s; }
+.place-item:hover { background:#ede3cc; }
+.place-item.custom-place { border-left:3px solid var(--blue); }
+.place-check { width:18px; height:18px; border-radius:50%; border:2px solid #c8b890; flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; cursor:pointer; transition:all 0.2s; }
+.place-check.visited { background:var(--rose); border-color:var(--rose); }
+.place-check.wishlist { background:var(--gold); border-color:var(--gold); }
+.place-check svg { width:10px; height:10px; fill:white; }
+.place-info { flex:1; min-width:0; }
+.place-name { font-size:0.8rem; font-weight:500; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.place-meta { font-size:0.65rem; color:#8a7040; margin-top:1px; display:flex; gap:5px; align-items:center; }
+.place-type-badge { font-size:0.58rem; padding:1px 5px; border-radius:6px; background:#e0d4b0; color:#6a5830; }
+.place-note-preview { font-size:0.62rem; color:var(--rose); font-style:italic; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.place-go-btn { font-size:0.58rem; color:#a89060; padding:2px 6px; border:1px solid #d0c090; border-radius:4px; background:transparent; cursor:pointer; flex-shrink:0; }
+.place-go-btn:hover { background:var(--rose); border-color:var(--rose); color:white; }
 
-  #header .title-block h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    color: var(--gold-light);
-    letter-spacing: 0.04em;
-  }
-  #header .title-block p {
-    font-size: 0.7rem;
-    color: #a89070;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-top: 1px;
-  }
+/* MAP */
+#map-container { flex:1; position:relative; }
+#map { width:100%; height:100%; }
+#map-controls { position:absolute; bottom:20px; right:14px; z-index:800; display:flex; flex-direction:column; gap:7px; }
+.map-btn { background:var(--parchment); border:1.5px solid var(--gold); color:var(--ink); padding:9px 12px; border-radius:10px; font-size:0.72rem; cursor:pointer; box-shadow:0 2px 8px var(--shadow); transition:all 0.2s; white-space:nowrap; font-family:'Inter',sans-serif; font-weight:500; display:flex; align-items:center; gap:5px; }
+.map-btn:hover { background:var(--gold-light); color:white; border-color:var(--gold-light); }
+.map-btn.rose { border-color:var(--rose); }
+.map-btn.rose:hover { background:var(--rose); border-color:var(--rose); }
+.map-btn.blue { border-color:var(--blue); }
+.map-btn.blue:hover { background:var(--blue); border-color:var(--blue); color:white; }
 
-  #counter-block {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-  }
-  .counter-pill {
-    background: rgba(212,160,23,0.15);
-    border: 1px solid rgba(212,160,23,0.3);
-    border-radius: 20px;
-    padding: 4px 14px;
-    text-align: center;
-  }
-  .counter-pill .num {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--gold-light);
-    display: block;
-    line-height: 1;
-  }
-  .counter-pill .lbl {
-    font-size: 0.58rem;
-    color: #a89070;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
+/* GPS PULSE */
+#geo-pulse { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); z-index:800; background:rgba(192,57,43,0.92); color:white; padding:10px 18px; border-radius:24px; font-size:0.76rem; font-weight:500; display:none; box-shadow:0 4px 16px rgba(192,57,43,0.4); white-space:nowrap; }
 
-  #header-actions {
-    display: flex;
-    gap: 8px;
-  }
-  .hbtn {
-    background: rgba(192,57,43,0.2);
-    border: 1px solid rgba(192,57,43,0.4);
-    color: #e8a090;
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 0.72rem;
-    cursor: pointer;
-    letter-spacing: 0.05em;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .hbtn:hover { background: rgba(192,57,43,0.4); color: #fff; }
-  .hbtn.gold {
-    background: rgba(212,160,23,0.2);
-    border-color: rgba(212,160,23,0.4);
-    color: var(--gold-light);
-  }
-  .hbtn.gold:hover { background: rgba(212,160,23,0.4); }
+/* GPS MARKER pulse animation */
+@keyframes gpsPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.3} }
 
-  /* LAYOUT */
-  #main {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
+/* DETAIL PANEL */
+#detail-panel { position:absolute; bottom:0; left:0; right:0; background:var(--parchment); border-top:2px solid var(--gold); z-index:900; padding:14px 16px 18px; transform:translateY(100%); transition:transform 0.3s ease; max-height:60%; overflow-y:auto; box-shadow:0 -4px 24px var(--shadow); }
+#detail-panel.open { transform:translateY(0); }
+#detail-panel h2 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--ink); margin-bottom:2px; }
+#detail-panel .dp-meta { font-size:0.7rem; color:#8a7040; margin-bottom:10px; display:flex; gap:8px; align-items:center; }
+#detail-panel .dp-actions { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px; }
+.dpbtn { padding:7px 14px; border-radius:8px; font-size:0.72rem; font-family:'Inter',sans-serif; cursor:pointer; border:1.5px solid; transition:all 0.2s; font-weight:500; }
+.dpbtn.visited-btn { border-color:var(--rose); color:var(--rose); background:transparent; }
+.dpbtn.visited-btn.active { background:var(--rose); color:white; }
+.dpbtn.wish-btn { border-color:var(--gold); color:var(--gold); background:transparent; }
+.dpbtn.wish-btn.active { background:var(--gold); color:white; }
+.dpbtn.delete-btn { border-color:#aaa; color:#888; background:transparent; }
+.dpbtn.delete-btn:hover { background:#c0392b; border-color:#c0392b; color:white; }
+.dpbtn.close-btn { border-color:#c0b090; color:#8a7040; background:transparent; margin-left:auto; }
+#detail-note-area { display:none; margin-top:6px; }
+#detail-note-area.show { display:block; }
+#detail-note-area label { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:#8a7040; display:block; margin-bottom:4px; }
+#detail-note-area textarea { width:100%; padding:9px; border:1.5px solid #c8b890; border-radius:8px; background:var(--cream); font-family:'Inter',sans-serif; font-size:0.78rem; color:var(--ink); resize:vertical; min-height:65px; outline:none; }
+#detail-note-area textarea:focus { border-color:var(--rose); }
+.save-note-btn { margin-top:7px; padding:7px 16px; background:var(--rose); color:white; border:none; border-radius:6px; font-size:0.72rem; cursor:pointer; font-family:'Inter',sans-serif; }
 
-  /* SIDEBAR */
-  #sidebar {
-    width: 300px;
-    background: var(--parchment);
-    border-right: 2px solid var(--parchment-dark);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
+/* ADD PLACE MODAL */
+#add-modal { display:none; position:fixed; inset:0; background:rgba(26,16,8,0.75); z-index:2000; align-items:center; justify-content:center; }
+#add-modal.open { display:flex; }
+.modal-box { background:var(--parchment); border:2px solid var(--gold); border-radius:16px; padding:22px; max-width:380px; width:92%; box-shadow:0 16px 48px rgba(26,16,8,0.4); }
+.modal-box h3 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--ink); margin-bottom:14px; }
+.modal-field { margin-bottom:12px; }
+.modal-field label { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:#8a7040; display:block; margin-bottom:4px; }
+.modal-field input, .modal-field select { width:100%; padding:9px 12px; border:1.5px solid #c8b890; border-radius:8px; background:var(--cream); font-family:'Inter',sans-serif; font-size:0.8rem; color:var(--ink); outline:none; }
+.modal-field input:focus, .modal-field select:focus { border-color:var(--gold); }
+.modal-actions { display:flex; gap:8px; margin-top:14px; }
+.mbtn { flex:1; padding:10px; border-radius:8px; font-size:0.76rem; cursor:pointer; font-family:'Inter',sans-serif; border:1.5px solid; transition:all 0.2s; }
+.mbtn.primary { background:var(--rose); border-color:var(--rose); color:white; }
+.mbtn.primary:hover { background:var(--rose-light); }
+.mbtn.secondary { background:transparent; border-color:#c0b090; color:#6a5830; }
+.mbtn.secondary:hover { background:#e0d4b0; }
+.mbtn.whatsapp { background:#25d366; border-color:#25d366; color:white; }
+.mbtn.whatsapp:hover { background:#1da851; }
 
-  #search-area {
-    padding: 14px;
-    background: var(--parchment-dark);
-    border-bottom: 1px solid #d5c9a8;
-  }
-  #search-area input {
-    width: 100%;
-    padding: 9px 14px;
-    border: 1.5px solid #c8b890;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
-    background: var(--cream);
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  #search-area input:focus { border-color: var(--gold); }
-  #search-area input::placeholder { color: #a89060; }
+/* SHARE MODAL */
+#share-modal { display:none; position:fixed; inset:0; background:rgba(26,16,8,0.75); z-index:2000; align-items:center; justify-content:center; }
+#share-modal.open { display:flex; }
+.share-link-box { background:var(--cream); border:1.5px solid #c8b890; border-radius:8px; padding:9px 12px; font-size:0.68rem; font-family:monospace; color:var(--rose); word-break:break-all; margin-bottom:10px; max-height:80px; overflow-y:auto; }
 
-  #filter-tabs {
-    display: flex;
-    gap: 4px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-  }
-  .ftab {
-    font-size: 0.65rem;
-    padding: 3px 10px;
-    border-radius: 12px;
-    border: 1px solid #c8b890;
-    background: transparent;
-    color: #7a6840;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.04em;
-  }
-  .ftab.active { background: var(--rose); border-color: var(--rose); color: #fff; }
-  .ftab:hover:not(.active) { background: #e8dfc8; }
+/* STATS MODAL */
+#stats-modal { display:none; position:fixed; inset:0; background:rgba(26,16,8,0.75); z-index:2000; align-items:center; justify-content:center; }
+#stats-modal.open { display:flex; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+.stat-card { background:var(--cream); border:1px solid #d0c090; border-radius:10px; padding:12px; text-align:center; }
+.stat-card .stat-num { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--rose); display:block; line-height:1; }
+.stat-card .stat-lbl { font-size:0.62rem; color:#8a7040; text-transform:uppercase; letter-spacing:0.06em; }
 
-  #list-header {
-    padding: 10px 14px 6px;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #8a7040;
-    border-bottom: 1px solid #e0d4b0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
-  }
+/* TOAST */
+#toast { position:fixed; bottom:70px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--gold-light); padding:9px 20px; border-radius:24px; font-size:0.76rem; z-index:3000; opacity:0; pointer-events:none; transition:opacity 0.3s; border:1px solid var(--gold); white-space:nowrap; }
+#toast.show { opacity:1; }
 
-  #places-list {
-    overflow-y: auto;
-    flex: 1;
-  }
-  #places-list::-webkit-scrollbar { width: 4px; }
-  #places-list::-webkit-scrollbar-thumb { background: #c8b890; border-radius: 2px; }
+/* LOADING */
+#loading-overlay { position:fixed; inset:0; background:var(--ink); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; }
+#loading-overlay h2 { font-family:'Playfair Display',serif; color:var(--gold-light); font-size:1.7rem; }
+#loading-overlay p { color:#a89070; font-size:0.82rem; }
+.loading-bar-wrap { width:180px; height:3px; background:rgba(212,160,23,0.2); border-radius:2px; overflow:hidden; }
+.loading-bar-fill { height:100%; background:var(--gold-light); border-radius:2px; animation:loadprogress 2.5s ease-out forwards; }
+@keyframes loadprogress { from{width:0%} to{width:100%} }
 
-  .place-item {
-    padding: 10px 14px;
-    border-bottom: 1px solid #e8dfc8;
-    cursor: pointer;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    transition: background 0.15s;
-  }
-  .place-item:hover { background: #ede3cc; }
-  .place-item.visited { background: #f0ede0; }
+/* POPUP */
+.leaflet-popup-content-wrapper { background:var(--parchment)!important; border:1.5px solid var(--gold)!important; border-radius:10px!important; box-shadow:0 4px 16px var(--shadow)!important; }
+.leaflet-popup-tip { background:var(--parchment)!important; }
+.popup-content { font-family:'Inter',sans-serif; min-width:150px; }
+.popup-content h4 { font-family:'Playfair Display',serif; font-size:0.95rem; color:var(--ink); margin-bottom:2px; }
+.popup-content p { font-size:0.68rem; color:#8a7040; margin-bottom:7px; }
+.popup-actions { display:flex; gap:5px; flex-wrap:wrap; }
+.popup-btn { flex:1; min-width:60px; padding:5px; font-size:0.65rem; border-radius:6px; cursor:pointer; border:1px solid; text-align:center; font-family:'Inter',sans-serif; transition:all 0.15s; }
+.popup-btn.v { border-color:var(--rose); color:var(--rose); background:transparent; }
+.popup-btn.v.active { background:var(--rose); color:white; }
+.popup-btn.w { border-color:var(--gold); color:var(--gold); background:transparent; }
+.popup-btn.w.active { background:var(--gold); color:white; }
+.popup-btn.d { border-color:var(--sage); color:var(--sage); background:transparent; }
+.popup-btn.d:hover { background:var(--sage); color:white; }
 
-  .place-check {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid #c8b890;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-    transition: all 0.2s;
-    cursor: pointer;
-    position: relative;
-  }
-  .place-check.visited { background: var(--rose); border-color: var(--rose); }
-  .place-check.wishlist { background: var(--gold); border-color: var(--gold); }
-  .place-check svg { width: 11px; height: 11px; fill: white; }
+/* GPS dot */
+.gps-dot-outer { width:20px; height:20px; border-radius:50%; background:rgba(192,57,43,0.25); display:flex; align-items:center; justify-content:center; animation:gpsPulse 1.5s infinite; }
+.gps-dot-inner { width:10px; height:10px; border-radius:50%; background:#c0392b; border:2px solid white; box-shadow:0 0 6px rgba(192,57,43,0.8); }
 
-  .place-info { flex: 1; min-width: 0; }
-  .place-name {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .place-meta {
-    font-size: 0.68rem;
-    color: #8a7040;
-    margin-top: 1px;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-  .place-type-badge {
-    font-size: 0.6rem;
-    padding: 1px 6px;
-    border-radius: 8px;
-    background: #e0d4b0;
-    color: #6a5830;
-  }
-  .place-note-preview {
-    font-size: 0.65rem;
-    color: var(--rose);
-    font-style: italic;
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .place-go-btn {
-    font-size: 0.6rem;
-    color: #a89060;
-    padding: 3px 7px;
-    border: 1px solid #d0c090;
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.15s;
-  }
-  .place-go-btn:hover { background: var(--rose); border-color: var(--rose); color: white; }
-
-  /* MAP */
-  #map-container {
-    flex: 1;
-    position: relative;
-  }
-  #map { width: 100%; height: 100%; }
-
-  /* MAP CONTROLS */
-  #map-controls {
-    position: absolute;
-    bottom: 20px;
-    right: 16px;
-    z-index: 800;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .map-btn {
-    background: var(--parchment);
-    border: 1.5px solid var(--gold);
-    color: var(--ink);
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    box-shadow: 0 2px 8px var(--shadow);
-    transition: all 0.2s;
-    white-space: nowrap;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .map-btn:hover { background: var(--gold-light); color: white; border-color: var(--gold-light); }
-  .map-btn.rose { border-color: var(--rose); }
-  .map-btn.rose:hover { background: var(--rose); border-color: var(--rose); }
-
-  /* GEO PULSE */
-  #geo-pulse {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 800;
-    background: rgba(192,57,43,0.9);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 24px;
-    font-size: 0.78rem;
-    font-weight: 500;
-    display: none;
-    animation: fadeInUp 0.3s ease;
-    box-shadow: 0 4px 16px rgba(192,57,43,0.4);
-  }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    to { opacity: 1; transform: translateX(-50%) translateY(0); }
-  }
-
-  /* DETAIL PANEL */
-  #detail-panel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--parchment);
-    border-top: 2px solid var(--gold);
-    z-index: 900;
-    padding: 16px 20px 20px;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    max-height: 55%;
-    overflow-y: auto;
-    box-shadow: 0 -4px 24px var(--shadow);
-  }
-  #detail-panel.open { transform: translateY(0); }
-
-  #detail-panel h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    color: var(--ink);
-    margin-bottom: 2px;
-  }
-  #detail-panel .dp-meta {
-    font-size: 0.72rem;
-    color: #8a7040;
-    margin-bottom: 12px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  #detail-panel .dp-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-  }
-  .dpbtn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    border: 1.5px solid;
-    transition: all 0.2s;
-    font-weight: 500;
-  }
-  .dpbtn.visited-btn { border-color: var(--rose); color: var(--rose); background: transparent; }
-  .dpbtn.visited-btn.active { background: var(--rose); color: white; }
-  .dpbtn.wish-btn { border-color: var(--gold); color: var(--gold); background: transparent; }
-  .dpbtn.wish-btn.active { background: var(--gold); color: white; }
-  .dpbtn.close-btn { border-color: #c0b090; color: #8a7040; background: transparent; margin-left: auto; }
-  .dpbtn.close-btn:hover { background: #e0d4b0; }
-
-  #detail-note-area {
-    display: none;
-    margin-top: 8px;
-  }
-  #detail-note-area.show { display: block; }
-  #detail-note-area label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #8a7040;
-    display: block;
-    margin-bottom: 5px;
-  }
-  #detail-note-area textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1.5px solid #c8b890;
-    border-radius: 8px;
-    background: var(--cream);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    color: var(--ink);
-    resize: vertical;
-    min-height: 70px;
-    outline: none;
-  }
-  #detail-note-area textarea:focus { border-color: var(--rose); }
-  #detail-note-area .note-date {
-    font-size: 0.65rem;
-    color: #a89060;
-    margin-top: 4px;
-    font-style: italic;
-  }
-  .save-note-btn {
-    margin-top: 8px;
-    padding: 7px 18px;
-    background: var(--rose);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-family: 'Inter', sans-serif;
-  }
-  .save-note-btn:hover { background: var(--rose-light); }
-
-  /* SHARE MODAL */
-  #share-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(26,16,8,0.7);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-  }
-  #share-modal.open { display: flex; }
-  .modal-box {
-    background: var(--parchment);
-    border: 2px solid var(--gold);
-    border-radius: 16px;
-    padding: 28px;
-    max-width: 420px;
-    width: 90%;
-    box-shadow: 0 16px 48px rgba(26,16,8,0.4);
-  }
-  .modal-box h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .modal-box p { font-size: 0.8rem; color: #6a5830; margin-bottom: 16px; line-height: 1.5; }
-  .share-link-box {
-    background: var(--cream);
-    border: 1.5px solid #c8b890;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.72rem;
-    font-family: monospace;
-    color: var(--rose);
-    word-break: break-all;
-    margin-bottom: 12px;
-  }
-  .modal-actions { display: flex; gap: 8px; }
-  .mbtn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    border: 1.5px solid;
-    transition: all 0.2s;
-  }
-  .mbtn.primary { background: var(--rose); border-color: var(--rose); color: white; }
-  .mbtn.primary:hover { background: var(--rose-light); }
-  .mbtn.secondary { background: transparent; border-color: #c0b090; color: #6a5830; }
-  .mbtn.secondary:hover { background: #e0d4b0; }
-
-  /* STATS MODAL */
-  #stats-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(26,16,8,0.7);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-  }
-  #stats-modal.open { display: flex; }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 16px 0;
-  }
-  .stat-card {
-    background: var(--cream);
-    border: 1px solid #d0c090;
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-  }
-  .stat-card .stat-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    color: var(--rose);
-    display: block;
-    line-height: 1;
-  }
-  .stat-card .stat-lbl { font-size: 0.68rem; color: #8a7040; text-transform: uppercase; letter-spacing: 0.08em; }
-
-  /* TOAST */
-  #toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--ink);
-    color: var(--gold-light);
-    padding: 10px 22px;
-    border-radius: 24px;
-    font-size: 0.8rem;
-    z-index: 3000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    border: 1px solid var(--gold);
-    white-space: nowrap;
-  }
-  #toast.show { opacity: 1; }
-
-  /* LEAFLET CUSTOM */
-  .leaflet-popup-content-wrapper {
-    background: var(--parchment) !important;
-    border: 1.5px solid var(--gold) !important;
-    border-radius: 10px !important;
-    box-shadow: 0 4px 16px var(--shadow) !important;
-  }
-  .leaflet-popup-tip { background: var(--parchment) !important; }
-  .popup-content { font-family: 'Inter', sans-serif; min-width: 160px; }
-  .popup-content h4 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ink); margin-bottom: 3px; }
-  .popup-content p { font-size: 0.72rem; color: #8a7040; margin-bottom: 8px; }
-  .popup-actions { display: flex; gap: 6px; }
-  .popup-btn { flex: 1; padding: 6px; font-size: 0.68rem; border-radius: 6px; cursor: pointer; border: 1px solid; text-align: center; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-  .popup-btn.v { border-color: var(--rose); color: var(--rose); background: transparent; }
-  .popup-btn.v.active { background: var(--rose); color: white; }
-  .popup-btn.w { border-color: var(--gold); color: var(--gold); background: transparent; }
-  .popup-btn.w.active { background: var(--gold); color: white; }
-  .popup-btn.d { border-color: var(--sage); color: var(--sage); background: transparent; }
-  .popup-btn.d:hover { background: var(--sage); color: white; }
-
-  #loading-overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--ink);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-  }
-  #loading-overlay h2 {
-    font-family: 'Playfair Display', serif;
-    color: var(--gold-light);
-    font-size: 1.8rem;
-  }
-  #loading-overlay p { color: #a89070; font-size: 0.85rem; }
-  .loading-bar-wrap {
-    width: 200px;
-    height: 3px;
-    background: rgba(212,160,23,0.2);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .loading-bar-fill {
-    height: 100%;
-    background: var(--gold-light);
-    border-radius: 2px;
-    animation: loadprogress 2.5s ease-out forwards;
-  }
-  @keyframes loadprogress { from { width: 0%; } to { width: 100%; } }
-
-  /* RESPONSIVE */
-  @media (max-width: 640px) {
-    #sidebar { display: none; }
-    #header .title-block h1 { font-size: 1rem; }
-    #counter-block { gap: 8px; }
-    .counter-pill .num { font-size: 1rem; }
-  }
+@media(max-width:640px){ #sidebar{display:none;} #header .title-block h1{font-size:0.95rem;} }
 </style>
 </head>
 <body>
@@ -603,57 +173,52 @@
   <div class="loading-bar-wrap"><div class="loading-bar-fill"></div></div>
 </div>
 
-<!-- HEADER -->
 <div id="header">
   <div class="title-block">
     <h1>La Nostra Italia ❤️</h1>
-    <p>La mappa dei nostri viaggi insieme</p>
+    <p>pinguini viaggiatori</p>
   </div>
   <div id="counter-block">
-    <div class="counter-pill">
-      <span class="num" id="cnt-visited">0</span>
-      <span class="lbl">Visitati</span>
-    </div>
-    <div class="counter-pill">
-      <span class="num" id="cnt-wishlist">0</span>
-      <span class="lbl">Sogni</span>
-    </div>
+    <div class="counter-pill"><span class="num" id="cnt-visited">0</span><span class="lbl">Visitati</span></div>
+    <div class="counter-pill"><span class="num" id="cnt-wishlist">0</span><span class="lbl">Sogni</span></div>
   </div>
   <div id="header-actions">
-    <button class="hbtn gold" onclick="openStats()">📊 Statistiche</button>
-    <button class="hbtn" onclick="openShare()">💌 Condividi</button>
+    <button class="hbtn green" onclick="openAddPlace()">➕ Aggiungi</button>
+    <button class="hbtn gold" onclick="openStats()">📊 Stats</button>
+    <button class="hbtn" onclick="openShare()">💌 Sync</button>
   </div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
-  <!-- SIDEBAR -->
   <div id="sidebar">
     <div id="search-area">
-      <input type="text" id="search-input" placeholder="🔍 Cerca città, borgo, paese..." autocomplete="off">
+      <input type="text" id="search-input" placeholder="🔍 Cerca luogo..." autocomplete="off">
       <div id="filter-tabs">
         <button class="ftab active" data-filter="all">Tutti</button>
         <button class="ftab" data-filter="visited">❤️ Visitati</button>
         <button class="ftab" data-filter="wishlist">⭐ Sogni</button>
         <button class="ftab" data-filter="città">Città</button>
         <button class="ftab" data-filter="borgo">Borghi</button>
-        <button class="ftab" data-filter="paese">Paesi</button>
         <button class="ftab" data-filter="natura">Natura</button>
+        <button class="ftab" data-filter="cascata">Cascate</button>
+        <button class="ftab" data-filter="fiume">Fiumi</button>
+        <button class="ftab" data-filter="luna park">Luna Park</button>
         <button class="ftab" data-filter="fantasma">Fantasma</button>
+        <button class="ftab" data-filter="custom">⭐ Miei</button>
       </div>
     </div>
     <div id="list-header">
       <span id="list-count">Caricamento...</span>
-      <span style="color: var(--rose); font-style: italic;">✦</span>
+      <span style="color:var(--rose);font-style:italic">✦</span>
     </div>
     <div id="places-list"></div>
   </div>
 
-  <!-- MAP -->
   <div id="map-container">
     <div id="map"></div>
     <div id="map-controls">
-      <button class="map-btn rose" onclick="geolocateMe()">📍 Dove siamo</button>
+      <button class="map-btn rose" onclick="geolocateMe()">📍 GPS - Dove siamo</button>
+      <button class="map-btn blue" onclick="openAddPlace()">➕ Aggiungi luogo</button>
       <button class="map-btn" onclick="flyToItaly()">🇮🇹 Vista Italia</button>
     </div>
     <div id="geo-pulse"></div>
@@ -662,11 +227,56 @@
       <div class="dp-meta" id="dp-meta"></div>
       <div class="dp-actions" id="dp-actions"></div>
       <div id="detail-note-area">
-        <label>✍️ Il nostro ricordo di questo posto</label>
-        <textarea id="dp-note" placeholder="Scrivi un ricordo, una data, un momento speciale..."></textarea>
-        <div class="note-date" id="dp-note-date"></div>
+        <label>✍️ Il nostro ricordo</label>
+        <textarea id="dp-note" placeholder="Una data, un momento speciale, un ricordo..."></textarea>
+        <div style="font-size:0.62rem;color:#a89060;margin-top:3px;font-style:italic" id="dp-note-date"></div>
         <button class="save-note-btn" onclick="saveNote()">Salva ricordo ❤️</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PLACE MODAL -->
+<div id="add-modal">
+  <div class="modal-box">
+    <h3>➕ Aggiungi un luogo</h3>
+    <div class="modal-field">
+      <label>Nome del luogo *</label>
+      <input type="text" id="add-name" placeholder="Es. Cascata delle Marmore, Luna Park di Roma...">
+    </div>
+    <div class="modal-field">
+      <label>Regione</label>
+      <input type="text" id="add-region" placeholder="Es. Umbria, Lazio...">
+    </div>
+    <div class="modal-field">
+      <label>Tipo di luogo</label>
+      <select id="add-type">
+        <option value="custom">⭐ Personale</option>
+        <option value="cascata">💧 Cascata</option>
+        <option value="fiume">🌊 Fiume / Lago</option>
+        <option value="luna park">🎡 Luna Park / Parco</option>
+        <option value="natura">🌿 Natura</option>
+        <option value="borgo">🏘️ Borgo</option>
+        <option value="città">🏙️ Città</option>
+        <option value="paese">🏡 Paese</option>
+        <option value="fantasma">👻 Paese Fantasma</option>
+        <option value="spiaggia">🏖️ Spiaggia</option>
+        <option value="montagna">⛰️ Montagna</option>
+        <option value="altro">📍 Altro</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>📍 Posizione — usa il GPS o inserisci le coordinate</label>
+      <button onclick="getGPSForNewPlace()" style="width:100%;padding:8px;background:rgba(192,57,43,0.15);border:1.5px solid var(--rose);border-radius:8px;color:var(--rose);font-size:0.75rem;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:6px;">📍 Usa la mia posizione GPS</button>
+      <div style="display:flex;gap:6px;">
+        <input type="number" id="add-lat" placeholder="Latitudine (es. 42.65)" step="0.0001" style="flex:1">
+        <input type="number" id="add-lng" placeholder="Longitudine (es. 13.70)" step="0.0001" style="flex:1">
+      </div>
+      <div style="font-size:0.65rem;color:#a89060;margin-top:3px" id="gps-status-add"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn primary" onclick="saveNewPlace()">Salva ❤️</button>
+      <button class="mbtn secondary" onclick="closeAddModal()">Annulla</button>
     </div>
   </div>
 </div>
@@ -674,11 +284,12 @@
 <!-- SHARE MODAL -->
 <div id="share-modal">
   <div class="modal-box">
-    <h3>💌 Condividi con lei</h3>
-    <p>Copia questo link e invialo alla tua fidanzata. Potrà vedere e spuntare i luoghi visitati insieme, aggiungere i suoi sogni e i vostri ricordi.</p>
+    <h3>💌 Sincronizza con lei</h3>
+    <p style="font-size:0.78rem;color:#6a5830;margin-bottom:12px;line-height:1.5">Questo link contiene tutti i vostri luoghi visitati, sogni e ricordi. Mandaglielo — aprirà la mappa già sincronizzata!</p>
     <div class="share-link-box" id="share-link-text"></div>
     <div class="modal-actions">
-      <button class="mbtn primary" onclick="copyShareLink()">📋 Copia link</button>
+      <button class="mbtn whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+      <button class="mbtn primary" onclick="copyShareLink()">📋 Copia</button>
       <button class="mbtn secondary" onclick="closeShare()">Chiudi</button>
     </div>
   </div>
@@ -687,571 +298,464 @@
 <!-- STATS MODAL -->
 <div id="stats-modal">
   <div class="modal-box">
-    <h3>📊 La vostra avventura italiana</h3>
+    <h3>📊 La vostra avventura</h3>
     <div class="stats-grid" id="stats-grid"></div>
-    <div style="text-align:center; font-style:italic; color:#8a7040; font-size:0.78rem; margin-bottom:14px;" id="stats-quote"></div>
-    <div class="modal-actions">
-      <button class="mbtn secondary" style="flex:1" onclick="document.getElementById('stats-modal').classList.remove('open')">Chiudi</button>
-    </div>
+    <div style="text-align:center;font-style:italic;color:#8a7040;font-size:0.76rem;margin-bottom:12px" id="stats-quote"></div>
+    <div class="modal-actions"><button class="mbtn secondary" style="flex:1" onclick="document.getElementById('stats-modal').classList.remove('open')">Chiudi</button></div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
-// ================== DATA ==================
-// All italian comuni (subset + special places for demo, with real coordinates)
-// In production this would load from a GeoJSON/API; here we include a rich representative set
-
+// ====== PLACES DB ======
 const PLACES_DB = [
-  // ABRUZZO (hometown region)
-  { id:"1", name:"Teramo", region:"Abruzzo", province:"TE", type:"città", lat:42.6589, lng:13.7036 },
-  { id:"2", name:"L'Aquila", region:"Abruzzo", province:"AQ", type:"città", lat:42.3498, lng:13.3995 },
-  { id:"3", name:"Pescara", region:"Abruzzo", province:"PE", type:"città", lat:42.4617, lng:14.2122 },
-  { id:"4", name:"Chieti", region:"Abruzzo", province:"CH", type:"città", lat:42.3514, lng:14.1674 },
-  { id:"5", name:"Gran Sasso d'Italia", region:"Abruzzo", province:"AQ", type:"natura", lat:42.4641, lng:13.5669, note_hint:"Il tetto dell'Appennino" },
-  { id:"6", name:"Santo Stefano di Sessanio", region:"Abruzzo", province:"AQ", type:"borgo", lat:42.3457, lng:13.6419 },
-  { id:"7", name:"Rocca Calascio", region:"Abruzzo", province:"AQ", type:"borgo", lat:42.3249, lng:13.6070 },
-  { id:"8", name:"Civitella del Tronto", region:"Abruzzo", province:"TE", type:"borgo", lat:42.7744, lng:13.6751 },
-  { id:"9", name:"Atri", region:"Abruzzo", province:"TE", type:"borgo", lat:42.5803, lng:13.9773 },
-  { id:"10", name:"Isola del Gran Sasso", region:"Abruzzo", province:"TE", type:"paese", lat:42.5099, lng:13.6602 },
-  { id:"11", name:"Pacentro", region:"Abruzzo", province:"AQ", type:"borgo", lat:42.0527, lng:13.9913 },
-  { id:"12", name:"Scanno", region:"Abruzzo", province:"AQ", type:"borgo", lat:41.9027, lng:13.8787 },
-  { id:"13", name:"Pescasseroli", region:"Abruzzo", province:"AQ", type:"paese", lat:41.8078, lng:13.7890 },
-  { id:"14", name:"Vasto", region:"Abruzzo", province:"CH", type:"città", lat:42.1135, lng:14.7079 },
-  { id:"15", name:"Lanciano", region:"Abruzzo", province:"CH", type:"città", lat:42.2323, lng:14.3916 },
-  // Fantasma Abruzzo
-  { id:"16", name:"Fracassa (Villaggio Fantasma)", region:"Abruzzo", province:"AQ", type:"fantasma", lat:42.0100, lng:13.8300 },
-  { id:"17", name:"Buonanotte (Paese Abbandonato)", region:"Abruzzo", province:"CH", type:"fantasma", lat:42.2000, lng:14.3000 },
-
-  // LAZIO
-  { id:"20", name:"Roma", region:"Lazio", province:"RM", type:"città", lat:41.9028, lng:12.4964 },
-  { id:"21", name:"Civita di Bagnoregio", region:"Lazio", province:"VT", type:"borgo", lat:42.6282, lng:12.1134 },
-  { id:"22", name:"Calcata", region:"Lazio", province:"VT", type:"borgo", lat:42.2202, lng:12.4324 },
-  { id:"23", name:"Sermoneta", region:"Lazio", province:"LT", type:"borgo", lat:41.5479, lng:12.9890 },
-  { id:"24", name:"Viterbo", region:"Lazio", province:"VT", type:"città", lat:42.4166, lng:12.1044 },
-  { id:"25", name:"Sperlonga", region:"Lazio", province:"LT", type:"borgo", lat:41.2588, lng:13.4407 },
-  { id:"26", name:"Lago di Bolsena", region:"Lazio", province:"VT", type:"natura", lat:42.6085, lng:11.9794 },
-  { id:"27", name:"Tivoli", region:"Lazio", province:"RM", type:"città", lat:41.9637, lng:12.7985 },
-
-  // TOSCANA
-  { id:"30", name:"Firenze", region:"Toscana", province:"FI", type:"città", lat:43.7696, lng:11.2558 },
-  { id:"31", name:"Siena", region:"Toscana", province:"SI", type:"città", lat:43.3188, lng:11.3307 },
-  { id:"32", name:"San Gimignano", region:"Toscana", province:"SI", type:"borgo", lat:43.4676, lng:11.0433 },
-  { id:"33", name:"Pienza", region:"Toscana", province:"SI", type:"borgo", lat:43.0786, lng:11.6785 },
-  { id:"34", name:"Montepulciano", region:"Toscana", province:"SI", type:"borgo", lat:43.0996, lng:11.7830 },
-  { id:"35", name:"Volterra", region:"Toscana", province:"PI", type:"città", lat:43.4012, lng:10.8607 },
-  { id:"36", name:"Lucca", region:"Toscana", province:"LU", type:"città", lat:43.8430, lng:10.5056 },
-  { id:"37", name:"Arezzo", region:"Toscana", province:"AR", type:"città", lat:43.4633, lng:11.8799 },
-  { id:"38", name:"Grosseto", region:"Toscana", province:"GR", type:"città", lat:42.7601, lng:11.1080 },
-  { id:"39", name:"Pitigliano", region:"Toscana", province:"GR", type:"borgo", lat:42.6357, lng:11.6697 },
-  { id:"40", name:"Val d'Orcia", region:"Toscana", province:"SI", type:"natura", lat:43.0500, lng:11.6000 },
-  { id:"41", name:"Sorano", region:"Toscana", province:"GR", type:"borgo", lat:42.6805, lng:11.7131 },
-  { id:"42", name:"Barga", region:"Toscana", province:"LU", type:"borgo", lat:44.0730, lng:10.4872 },
-  { id:"43", name:"Montefioralle", region:"Toscana", province:"FI", type:"borgo", lat:43.5440, lng:11.2956 },
-
-  // UMBRIA
-  { id:"50", name:"Perugia", region:"Umbria", province:"PG", type:"città", lat:43.1107, lng:12.3908 },
-  { id:"51", name:"Assisi", region:"Umbria", province:"PG", type:"borgo", lat:43.0703, lng:12.6196 },
-  { id:"52", name:"Orvieto", region:"Umbria", province:"TR", type:"città", lat:42.7186, lng:12.1114 },
-  { id:"53", name:"Gubbio", region:"Umbria", province:"PG", type:"città", lat:43.3540, lng:12.5778 },
-  { id:"54", name:"Spello", region:"Umbria", province:"PG", type:"borgo", lat:42.9918, lng:12.6725 },
-  { id:"55", name:"Lago Trasimeno", region:"Umbria", province:"PG", type:"natura", lat:43.1400, lng:12.1000 },
-  { id:"56", name:"Norcia", region:"Umbria", province:"PG", type:"borgo", lat:42.7922, lng:13.0961 },
-  { id:"57", name:"Castiglione del Lago", region:"Umbria", province:"PG", type:"borgo", lat:43.1280, lng:12.0477 },
-
-  // MARCHE
-  { id:"60", name:"Urbino", region:"Marche", province:"PU", type:"città", lat:43.7263, lng:12.6360 },
-  { id:"61", name:"Ascoli Piceno", region:"Marche", province:"AP", type:"città", lat:42.8541, lng:13.5750 },
-  { id:"62", name:"Ancona", region:"Marche", province:"AN", type:"città", lat:43.6159, lng:13.5181 },
-  { id:"63", name:"Loreto", region:"Marche", province:"AN", type:"borgo", lat:43.4407, lng:13.6067 },
-  { id:"64", name:"Gradara", region:"Marche", province:"PU", type:"borgo", lat:43.9408, lng:12.7754 },
-  { id:"65", name:"Ripatransone", region:"Marche", province:"AP", type:"borgo", lat:43.0009, lng:13.7649 },
-
-  // CAMPANIA
-  { id:"70", name:"Napoli", region:"Campania", province:"NA", type:"città", lat:40.8522, lng:14.2681 },
-  { id:"71", name:"Ravello", region:"Campania", province:"SA", type:"borgo", lat:40.6480, lng:14.6105 },
-  { id:"72", name:"Positano", region:"Campania", province:"SA", type:"borgo", lat:40.6280, lng:14.4840 },
-  { id:"73", name:"Amalfi", region:"Campania", province:"SA", type:"borgo", lat:40.6340, lng:14.6029 },
-  { id:"74", name:"Paestum", region:"Campania", province:"SA", type:"natura", lat:40.4218, lng:15.0057 },
-  { id:"75", name:"Caserta", region:"Campania", province:"CE", type:"città", lat:41.0761, lng:14.3328 },
-  { id:"76", name:"Capri", region:"Campania", province:"NA", type:"borgo", lat:40.5528, lng:14.2228 },
-  { id:"77", name:"Ischia", region:"Campania", province:"NA", type:"natura", lat:40.7300, lng:13.9000 },
-  { id:"78", name:"Matera", region:"Basilicata", province:"MT", type:"città", lat:40.6664, lng:16.6043 },
-
-  // SICILIA
-  { id:"80", name:"Palermo", region:"Sicilia", province:"PA", type:"città", lat:38.1157, lng:13.3615 },
-  { id:"81", name:"Taormina", region:"Sicilia", province:"ME", type:"borgo", lat:37.8516, lng:15.2862 },
-  { id:"82", name:"Agrigento", region:"Sicilia", province:"AG", type:"città", lat:37.3125, lng:13.5766 },
-  { id:"83", name:"Siracusa", region:"Sicilia", province:"SR", type:"città", lat:37.0755, lng:15.2866 },
-  { id:"84", name:"Noto", region:"Sicilia", province:"SR", type:"borgo", lat:36.8894, lng:15.0696 },
-  { id:"85", name:"Ragusa", region:"Sicilia", province:"RG", type:"città", lat:36.9279, lng:14.7285 },
-  { id:"86", name:"Erice", region:"Sicilia", province:"TP", type:"borgo", lat:38.0387, lng:12.5876 },
-  { id:"87", name:"Stromboli", region:"Sicilia", province:"ME", type:"natura", lat:38.7922, lng:15.2131 },
-  { id:"88", name:"Scala dei Turchi", region:"Sicilia", province:"AG", type:"natura", lat:37.2872, lng:13.4744 },
-  { id:"89", name:"Pantelleria", region:"Sicilia", province:"TP", type:"natura", lat:36.7996, lng:11.9890 },
-
-  // SARDEGNA
-  { id:"90", name:"Cagliari", region:"Sardegna", province:"CA", type:"città", lat:39.2238, lng:9.1217 },
-  { id:"91", name:"Alghero", region:"Sardegna", province:"SS", type:"città", lat:40.5597, lng:8.3196 },
-  { id:"92", name:"Bosa", region:"Sardegna", province:"OR", type:"borgo", lat:40.2978, lng:8.4974 },
-  { id:"93", name:"Orgosolo", region:"Sardegna", province:"NU", type:"paese", lat:40.2010, lng:9.3521 },
-  { id:"94", name:"Golfo di Orosei", region:"Sardegna", province:"NU", type:"natura", lat:40.1500, lng:9.7700 },
-  { id:"95", name:"La Maddalena", region:"Sardegna", province:"SS", type:"natura", lat:41.2126, lng:9.4066 },
-
-  // NORD ITALIA
-  { id:"100", name:"Milano", region:"Lombardia", province:"MI", type:"città", lat:45.4654, lng:9.1859 },
-  { id:"101", name:"Venezia", region:"Veneto", province:"VE", type:"città", lat:45.4408, lng:12.3155 },
-  { id:"102", name:"Verona", region:"Veneto", province:"VR", type:"città", lat:45.4384, lng:10.9916 },
-  { id:"103", name:"Torino", region:"Piemonte", province:"TO", type:"città", lat:45.0703, lng:7.6869 },
-  { id:"104", name:"Genova", region:"Liguria", province:"GE", type:"città", lat:44.4056, lng:8.9463 },
-  { id:"105", name:"Bologna", region:"Emilia-Romagna", province:"BO", type:"città", lat:44.4949, lng:11.3426 },
-  { id:"106", name:"Lago di Como", region:"Lombardia", province:"CO", type:"natura", lat:45.9800, lng:9.2700 },
-  { id:"107", name:"Lago di Garda", region:"Lombardia", province:"BS", type:"natura", lat:45.6389, lng:10.7120 },
-  { id:"108", name:"Cinque Terre", region:"Liguria", province:"SP", type:"natura", lat:44.1234, lng:9.7150 },
-  { id:"109", name:"Portofino", region:"Liguria", province:"GE", type:"borgo", lat:44.3042, lng:9.2090 },
-  { id:"110", name:"Bolzano", region:"Trentino-Alto Adige", province:"BZ", type:"città", lat:46.4983, lng:11.3548 },
-  { id:"111", name:"Dolomiti", region:"Trentino-Alto Adige", province:"BZ", type:"natura", lat:46.5100, lng:11.8000 },
-  { id:"112", name:"Cortina d'Ampezzo", region:"Veneto", province:"BL", type:"borgo", lat:46.5398, lng:12.1357 },
-  { id:"113", name:"Trento", region:"Trentino-Alto Adige", province:"TN", type:"città", lat:46.0748, lng:11.1217 },
-  { id:"114", name:"Trieste", region:"Friuli-Venezia Giulia", province:"TS", type:"città", lat:45.6495, lng:13.7768 },
-  { id:"115", name:"Udine", region:"Friuli-Venezia Giulia", province:"UD", type:"città", lat:46.0711, lng:13.2350 },
-
-  // SUD ITALIA
-  { id:"120", name:"Bari", region:"Puglia", province:"BA", type:"città", lat:41.1171, lng:16.8719 },
-  { id:"121", name:"Lecce", region:"Puglia", province:"LE", type:"città", lat:40.3536, lng:18.1752 },
-  { id:"122", name:"Alberobello", region:"Puglia", province:"BA", type:"borgo", lat:40.7851, lng:17.2386 },
-  { id:"123", name:"Polignano a Mare", region:"Puglia", province:"BA", type:"borgo", lat:40.9966, lng:17.2238 },
-  { id:"124", name:"Ostuni", region:"Puglia", province:"BR", type:"borgo", lat:40.7280, lng:17.5777 },
-  { id:"125", name:"Gallipoli", region:"Puglia", province:"LE", type:"borgo", lat:40.0573, lng:17.9931 },
-  { id:"126", name:"Cosenza", region:"Calabria", province:"CS", type:"città", lat:39.3031, lng:16.2514 },
-  { id:"127", name:"Tropea", region:"Calabria", province:"VV", type:"borgo", lat:38.6765, lng:15.8987 },
-  { id:"128", name:"Gerace", region:"Calabria", province:"RC", type:"borgo", lat:38.2681, lng:16.2149 },
-  { id:"129", name:"Craco (Paese Fantasma)", region:"Basilicata", province:"MT", type:"fantasma", lat:40.3793, lng:16.4431 },
-  { id:"130", name:"Rivello", region:"Basilicata", province:"PZ", type:"borgo", lat:40.0744, lng:15.7253 },
-  { id:"131", name:"Potenza", region:"Basilicata", province:"PZ", type:"città", lat:40.6400, lng:15.8097 },
-
-  // BORGHI & LUOGHI NASCOSTI EXTRA
-  { id:"140", name:"Civita di Lubriano", region:"Lazio", province:"VT", type:"borgo", lat:42.6391, lng:12.0760 },
-  { id:"141", name:"Bomarzo (Parco dei Mostri)", region:"Lazio", province:"VT", type:"natura", lat:42.4898, lng:12.2489 },
-  { id:"142", name:"Collalto Sabino", region:"Lazio", province:"RI", type:"paese", lat:42.1070, lng:13.0127 },
-  { id:"143", name:"Castel del Monte", region:"Puglia", province:"BT", type:"borgo", lat:41.0848, lng:16.2723 },
-  { id:"144", name:"Sassi di Matera", region:"Basilicata", province:"MT", type:"natura", lat:40.6640, lng:16.6099 },
-  { id:"145", name:"Riviera del Conero", region:"Marche", province:"AN", type:"natura", lat:43.5400, lng:13.6000 },
-  { id:"146", name:"Prato Piazza / Plateau de la Pausa", region:"Trentino-Alto Adige", province:"BZ", type:"natura", lat:46.7050, lng:12.1970 },
-  { id:"147", name:"Bagno Vignoni", region:"Toscana", province:"SI", type:"borgo", lat:43.0287, lng:11.6199 },
-  { id:"148", name:"Riomaggiore", region:"Liguria", province:"SP", type:"borgo", lat:44.0996, lng:9.7374 },
-  { id:"149", name:"Vernazza", region:"Liguria", province:"SP", type:"borgo", lat:44.1348, lng:9.6831 },
-  { id:"150", name:"Varenna", region:"Lombardia", province:"LC", type:"borgo", lat:46.0106, lng:9.2839 },
-  { id:"151", name:"Bormio", region:"Lombardia", province:"SO", type:"borgo", lat:46.4679, lng:10.3744 },
-  { id:"152", name:"Sabbioneta", region:"Lombardia", province:"MN", type:"borgo", lat:44.9991, lng:10.4955 },
-  { id:"153", name:"Ferrara", region:"Emilia-Romagna", province:"FE", type:"città", lat:44.8381, lng:11.6198 },
-  { id:"154", name:"Ravenna", region:"Emilia-Romagna", province:"RA", type:"città", lat:44.4184, lng:12.2035 },
-  { id:"155", name:"Comacchio", region:"Emilia-Romagna", province:"FE", type:"borgo", lat:44.6996, lng:12.1820 },
-  { id:"156", name:"Premilcuore", region:"Emilia-Romagna", province:"FC", type:"paese", lat:43.9773, lng:11.7694 },
-  { id:"157", name:"Fenestrelle (Forte Fantasma)", region:"Piemonte", province:"TO", type:"fantasma", lat:45.0379, lng:7.0462 },
-  { id:"158", name:"Oropa", region:"Piemonte", province:"BI", type:"natura", lat:45.6270, lng:7.9827 },
-  { id:"159", name:"Alagna Valsesia", region:"Piemonte", province:"VC", type:"borgo", lat:45.8596, lng:7.9370 },
-  { id:"160", name:"Bobbio", region:"Emilia-Romagna", province:"PC", type:"borgo", lat:44.7688, lng:9.3870 },
+  {id:"1",name:"Teramo",region:"Abruzzo",province:"TE",type:"città",lat:42.6589,lng:13.7036},
+  {id:"2",name:"L'Aquila",region:"Abruzzo",province:"AQ",type:"città",lat:42.3498,lng:13.3995},
+  {id:"3",name:"Pescara",region:"Abruzzo",province:"PE",type:"città",lat:42.4617,lng:14.2122},
+  {id:"4",name:"Chieti",region:"Abruzzo",province:"CH",type:"città",lat:42.3514,lng:14.1674},
+  {id:"5",name:"Gran Sasso d'Italia",region:"Abruzzo",province:"AQ",type:"natura",lat:42.4641,lng:13.5669},
+  {id:"6",name:"Santo Stefano di Sessanio",region:"Abruzzo",province:"AQ",type:"borgo",lat:42.3457,lng:13.6419},
+  {id:"7",name:"Rocca Calascio",region:"Abruzzo",province:"AQ",type:"borgo",lat:42.3249,lng:13.6070},
+  {id:"8",name:"Civitella del Tronto",region:"Abruzzo",province:"TE",type:"borgo",lat:42.7744,lng:13.6751},
+  {id:"9",name:"Atri",region:"Abruzzo",province:"TE",type:"borgo",lat:42.5803,lng:13.9773},
+  {id:"10",name:"Scanno",region:"Abruzzo",province:"AQ",type:"borgo",lat:41.9027,lng:13.8787},
+  {id:"11",name:"Pacentro",region:"Abruzzo",province:"AQ",type:"borgo",lat:42.0527,lng:13.9913},
+  {id:"12",name:"Pescasseroli",region:"Abruzzo",province:"AQ",type:"paese",lat:41.8078,lng:13.7890},
+  {id:"13",name:"Vasto",region:"Abruzzo",province:"CH",type:"città",lat:42.1135,lng:14.7079},
+  {id:"14",name:"Lanciano",region:"Abruzzo",province:"CH",type:"città",lat:42.2323,lng:14.3916},
+  {id:"15",name:"Isola del Gran Sasso",region:"Abruzzo",province:"TE",type:"paese",lat:42.5099,lng:13.6602},
+  {id:"16",name:"Cascata del Voltigno",region:"Abruzzo",province:"PE",type:"cascata",lat:42.2540,lng:14.0100},
+  {id:"17",name:"Lago di Scanno",region:"Abruzzo",province:"AQ",type:"fiume",lat:41.9047,lng:13.8830},
+  {id:"18",name:"Fiume Tirino",region:"Abruzzo",province:"AQ",type:"fiume",lat:42.1900,lng:13.7700},
+  {id:"19",name:"Roma",region:"Lazio",province:"RM",type:"città",lat:41.9028,lng:12.4964},
+  {id:"20",name:"Civita di Bagnoregio",region:"Lazio",province:"VT",type:"borgo",lat:42.6282,lng:12.1134},
+  {id:"21",name:"Calcata",region:"Lazio",province:"VT",type:"borgo",lat:42.2202,lng:12.4324},
+  {id:"22",name:"Sperlonga",region:"Lazio",province:"LT",type:"borgo",lat:41.2588,lng:13.4407},
+  {id:"23",name:"Lago di Bolsena",region:"Lazio",province:"VT",type:"fiume",lat:42.6085,lng:11.9794},
+  {id:"24",name:"Cascata delle Marmore",region:"Umbria",province:"TR",type:"cascata",lat:42.5615,lng:12.7138},
+  {id:"25",name:"Firenze",region:"Toscana",province:"FI",type:"città",lat:43.7696,lng:11.2558},
+  {id:"26",name:"Siena",region:"Toscana",province:"SI",type:"città",lat:43.3188,lng:11.3307},
+  {id:"27",name:"San Gimignano",region:"Toscana",province:"SI",type:"borgo",lat:43.4676,lng:11.0433},
+  {id:"28",name:"Pienza",region:"Toscana",province:"SI",type:"borgo",lat:43.0786,lng:11.6785},
+  {id:"29",name:"Volterra",region:"Toscana",province:"PI",type:"città",lat:43.4012,lng:10.8607},
+  {id:"30",name:"Pitigliano",region:"Toscana",province:"GR",type:"borgo",lat:42.6357,lng:11.6697},
+  {id:"31",name:"Val d'Orcia",region:"Toscana",province:"SI",type:"natura",lat:43.0500,lng:11.6000},
+  {id:"32",name:"Bagno Vignoni",region:"Toscana",province:"SI",type:"borgo",lat:43.0287,lng:11.6199},
+  {id:"33",name:"Perugia",region:"Umbria",province:"PG",type:"città",lat:43.1107,lng:12.3908},
+  {id:"34",name:"Assisi",region:"Umbria",province:"PG",type:"borgo",lat:43.0703,lng:12.6196},
+  {id:"35",name:"Orvieto",region:"Umbria",province:"TR",type:"città",lat:42.7186,lng:12.1114},
+  {id:"36",name:"Lago Trasimeno",region:"Umbria",province:"PG",type:"fiume",lat:43.1400,lng:12.1000},
+  {id:"37",name:"Urbino",region:"Marche",province:"PU",type:"città",lat:43.7263,lng:12.6360},
+  {id:"38",name:"Gradara",region:"Marche",province:"PU",type:"borgo",lat:43.9408,lng:12.7754},
+  {id:"39",name:"Riviera del Conero",region:"Marche",province:"AN",type:"natura",lat:43.5400,lng:13.6000},
+  {id:"40",name:"Napoli",region:"Campania",province:"NA",type:"città",lat:40.8522,lng:14.2681},
+  {id:"41",name:"Positano",region:"Campania",province:"SA",type:"borgo",lat:40.6280,lng:14.4840},
+  {id:"42",name:"Ravello",region:"Campania",province:"SA",type:"borgo",lat:40.6480,lng:14.6105},
+  {id:"43",name:"Capri",region:"Campania",province:"NA",type:"natura",lat:40.5528,lng:14.2228},
+  {id:"44",name:"Ischia",region:"Campania",province:"NA",type:"natura",lat:40.7300,lng:13.9000},
+  {id:"45",name:"Palermo",region:"Sicilia",province:"PA",type:"città",lat:38.1157,lng:13.3615},
+  {id:"46",name:"Taormina",region:"Sicilia",province:"ME",type:"borgo",lat:37.8516,lng:15.2862},
+  {id:"47",name:"Noto",region:"Sicilia",province:"SR",type:"borgo",lat:36.8894,lng:15.0696},
+  {id:"48",name:"Erice",region:"Sicilia",province:"TP",type:"borgo",lat:38.0387,lng:12.5876},
+  {id:"49",name:"Stromboli",region:"Sicilia",province:"ME",type:"natura",lat:38.7922,lng:15.2131},
+  {id:"50",name:"Scala dei Turchi",region:"Sicilia",province:"AG",type:"natura",lat:37.2872,lng:13.4744},
+  {id:"51",name:"Cagliari",region:"Sardegna",province:"CA",type:"città",lat:39.2238,lng:9.1217},
+  {id:"52",name:"Bosa",region:"Sardegna",province:"OR",type:"borgo",lat:40.2978,lng:8.4974},
+  {id:"53",name:"Golfo di Orosei",region:"Sardegna",province:"NU",type:"natura",lat:40.1500,lng:9.7700},
+  {id:"54",name:"Milano",region:"Lombardia",province:"MI",type:"città",lat:45.4654,lng:9.1859},
+  {id:"55",name:"Venezia",region:"Veneto",province:"VE",type:"città",lat:45.4408,lng:12.3155},
+  {id:"56",name:"Verona",region:"Veneto",province:"VR",type:"città",lat:45.4384,lng:10.9916},
+  {id:"57",name:"Lago di Como",region:"Lombardia",province:"CO",type:"fiume",lat:45.9800,lng:9.2700},
+  {id:"58",name:"Lago di Garda",region:"Lombardia",province:"BS",type:"fiume",lat:45.6389,lng:10.7120},
+  {id:"59",name:"Cinque Terre",region:"Liguria",province:"SP",type:"natura",lat:44.1234,lng:9.7150},
+  {id:"60",name:"Portofino",region:"Liguria",province:"GE",type:"borgo",lat:44.3042,lng:9.2090},
+  {id:"61",name:"Dolomiti",region:"Trentino-Alto Adige",province:"BZ",type:"natura",lat:46.5100,lng:11.8000},
+  {id:"62",name:"Cortina d'Ampezzo",region:"Veneto",province:"BL",type:"borgo",lat:46.5398,lng:12.1357},
+  {id:"63",name:"Bari",region:"Puglia",province:"BA",type:"città",lat:41.1171,lng:16.8719},
+  {id:"64",name:"Lecce",region:"Puglia",province:"LE",type:"città",lat:40.3536,lng:18.1752},
+  {id:"65",name:"Alberobello",region:"Puglia",province:"BA",type:"borgo",lat:40.7851,lng:17.2386},
+  {id:"66",name:"Polignano a Mare",region:"Puglia",province:"BA",type:"borgo",lat:40.9966,lng:17.2238},
+  {id:"67",name:"Ostuni",region:"Puglia",province:"BR",type:"borgo",lat:40.7280,lng:17.5777},
+  {id:"68",name:"Tropea",region:"Calabria",province:"VV",type:"borgo",lat:38.6765,lng:15.8987},
+  {id:"69",name:"Matera",region:"Basilicata",province:"MT",type:"città",lat:40.6664,lng:16.6043},
+  {id:"70",name:"Craco (Paese Fantasma)",region:"Basilicata",province:"MT",type:"fantasma",lat:40.3793,lng:16.4431},
+  {id:"71",name:"Torino",region:"Piemonte",province:"TO",type:"città",lat:45.0703,lng:7.6869},
+  {id:"72",name:"Bologna",region:"Emilia-Romagna",province:"BO",type:"città",lat:44.4949,lng:11.3426},
+  {id:"73",name:"Ravenna",region:"Emilia-Romagna",province:"RA",type:"città",lat:44.4184,lng:12.2035},
+  {id:"74",name:"Ferrara",region:"Emilia-Romagna",province:"FE",type:"città",lat:44.8381,lng:11.6198},
+  {id:"75",name:"Trieste",region:"Friuli-Venezia Giulia",province:"TS",type:"città",lat:45.6495,lng:13.7768},
+  {id:"76",name:"Cascata del Serio",region:"Lombardia",province:"BG",type:"cascata",lat:46.0100,lng:9.9800},
+  {id:"77",name:"Cascata di Lillaz",region:"Valle d'Aosta",province:"AO",type:"cascata",lat:45.6100,lng:7.3500},
+  {id:"78",name:"Lago d'Iseo",region:"Lombardia",province:"BS",type:"fiume",lat:45.7200,lng:10.0600},
+  {id:"79",name:"Lago Maggiore",region:"Piemonte",province:"VB",type:"fiume",lat:45.9500,lng:8.5700},
+  {id:"80",name:"Mirabilandia",region:"Emilia-Romagna",province:"RA",type:"luna park",lat:44.3361,lng:12.2711},
+  {id:"81",name:"Gardaland",region:"Veneto",province:"VR",type:"luna park",lat:45.4456,lng:10.7164},
+  {id:"82",name:"Cinecittà World",region:"Lazio",province:"RM",type:"luna park",lat:41.7916,lng:12.3744},
+  {id:"83",name:"Leolandia",region:"Lombardia",province:"BG",type:"luna park",lat:45.6000,lng:9.5500},
+  {id:"84",name:"Etnaland",region:"Sicilia",province:"CT",type:"luna park",lat:37.5900,lng:14.9800},
 ];
 
-// ================== STATE ==================
-const STORAGE_KEY = "mappa_amore_v2";
-let state = { visited: {}, wishlist: {}, notes: {}, noteDates: {} };
+// ====== STATE ======
+const STORAGE_KEY = "mappa_amore_v3";
+let state = { visited:{}, wishlist:{}, notes:{}, noteDates:{}, customPlaces:[] };
 
 function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) state = JSON.parse(raw);
-  } catch(e) {}
+  try { const r=localStorage.getItem(STORAGE_KEY); if(r) state=JSON.parse(r); if(!state.customPlaces) state.customPlaces=[]; } catch(e){}
 }
 function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-  // Also encode in URL hash for sharing
+  try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); } catch(e){}
   updateURLHash();
 }
-
 function updateURLHash() {
-  const compact = { v: Object.keys(state.visited), w: Object.keys(state.wishlist), n: state.notes };
-  window.location.hash = btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
-}
-
-function loadFromHash() {
-  if (!window.location.hash || window.location.hash.length < 3) return;
   try {
-    const decoded = JSON.parse(decodeURIComponent(escape(atob(window.location.hash.slice(1)))));
-    if (decoded.v) decoded.v.forEach(id => state.visited[id] = true);
-    if (decoded.w) decoded.w.forEach(id => state.wishlist[id] = true);
-    if (decoded.n) Object.assign(state.notes, decoded.n);
+    const compact={v:Object.keys(state.visited),w:Object.keys(state.wishlist),n:state.notes,nd:state.noteDates,cp:state.customPlaces};
+    window.location.hash=btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
+  } catch(e){}
+}
+function loadFromHash() {
+  if(!window.location.hash||window.location.hash.length<3) return;
+  try {
+    const decoded=JSON.parse(decodeURIComponent(escape(atob(window.location.hash.slice(1)))));
+    if(decoded.v) decoded.v.forEach(id=>state.visited[id]=true);
+    if(decoded.w) decoded.w.forEach(id=>state.wishlist[id]=true);
+    if(decoded.n) Object.assign(state.notes,decoded.n);
+    if(decoded.nd) Object.assign(state.noteDates,decoded.nd);
+    if(decoded.cp) state.customPlaces=[...decoded.cp];
     saveState();
-  } catch(e) {}
+  } catch(e){}
 }
 
-// ================== MAP ==================
-let map, markers = {}, currentDetailId = null;
-let activeFilter = "all";
-let searchQuery = "";
+function allPlaces() { return [...PLACES_DB, ...state.customPlaces]; }
+
+// ====== MAP ======
+let map, markers={}, currentDetailId=null, activeFilter="all", searchQuery="", gpsMarker=null;
 
 function initMap() {
-  map = L.map('map', { zoomControl: true, attributionControl: false }).setView([42.5, 12.5], 6);
-
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19, subdomains: 'abcd'
-  }).addTo(map);
-
-  // Attribution elegante
-  L.control.attribution({ prefix: false, position: 'bottomleft' })
-    .addAttribution('<span style="color:#a89060;font-size:10px">© OpenStreetMap · CartoDB</span>')
-    .addTo(map);
-
-  PLACES_DB.forEach(place => {
-    const marker = L.circleMarker([place.lat, place.lng], getMarkerStyle(place))
-      .addTo(map)
-      .bindPopup(buildPopup(place), { maxWidth: 220 });
-
-    marker.on('click', () => openDetail(place.id));
-    markers[place.id] = marker;
-  });
-
+  map=L.map('map',{zoomControl:true,attributionControl:false}).setView([42.5,12.5],6);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd'}).addTo(map);
+  L.control.attribution({prefix:false,position:'bottomleft'}).addAttribution('<span style="color:#a89060;font-size:10px">© OpenStreetMap · CartoDB</span>').addTo(map);
+  allPlaces().forEach(p=>addMarker(p));
   updateMarkers();
+  // Click on map to add place at that location
+  map.on('contextmenu',function(e){ openAddPlaceAtCoords(e.latlng.lat,e.latlng.lng); });
 }
 
-function getMarkerStyle(place, forceState) {
-  const isVisited = state.visited[place.id];
-  const isWish = state.wishlist[place.id];
-  const typeColors = {
-    città: '#8B4513', borgo: '#b8860b', paese: '#556b2f',
-    natura: '#2e8b57', fantasma: '#4a4a6a', unknown: '#888'
-  };
-  let color = typeColors[place.type] || typeColors.unknown;
-  let radius = place.type === 'città' ? 7 : 5;
-  let fillOpacity = 0.6;
-  let weight = 1.5;
-  let fillColor = color;
+function addMarker(place) {
+  if(markers[place.id]) return;
+  const m=L.circleMarker([place.lat,place.lng],getMarkerStyle(place))
+    .addTo(map)
+    .bindPopup(buildPopup(place),{maxWidth:220});
+  m.on('click',()=>openDetail(place.id));
+  markers[place.id]=m;
+}
 
-  if (isVisited) { fillColor = '#c0392b'; fillOpacity = 1; radius += 2; weight = 2.5; color = '#fff'; }
-  else if (isWish) { fillColor = '#b8860b'; fillOpacity = 0.85; weight = 2; color = '#fff'; }
+const TYPE_COLORS={città:'#8B4513',borgo:'#b8860b',paese:'#556b2f',natura:'#2e8b57',
+  fantasma:'#4a4a6a',cascata:'#2471a3',fiume:'#1a5276','luna park':'#8e44ad',
+  spiaggia:'#d4ac0d',montagna:'#6d6d6d',custom:'#c0392b',altro:'#888'};
 
-  return { radius, fillColor, color, fillOpacity, weight, className: 'place-marker' };
+function getMarkerStyle(place) {
+  const isV=state.visited[place.id], isW=state.wishlist[place.id];
+  let color=TYPE_COLORS[place.type]||'#888';
+  let radius=place.type==='città'?7:5, fillOpacity=0.65, weight=1.5, fillColor=color;
+  if(isV){fillColor='#c0392b';fillOpacity=1;radius+=2;weight=2.5;color='#fff';}
+  else if(isW){fillColor='#b8860b';fillOpacity=0.9;weight=2;color='#fff';}
+  return{radius,fillColor,color,fillOpacity,weight};
 }
 
 function updateMarkers() {
-  PLACES_DB.forEach(place => {
-    const m = markers[place.id];
-    if (!m) return;
-    const show = filterMatch(place);
-    if (show) { m.setStyle(getMarkerStyle(place)); m.setOpacity ? m.setOpacity(1) : null; }
-    else { m.setStyle({ fillOpacity: 0.08, opacity: 0.08 }); }
+  allPlaces().forEach(place=>{
+    const m=markers[place.id]; if(!m) return;
+    const show=filterMatch(place);
+    if(show){m.setStyle(getMarkerStyle(place));m.setOpacity(1);}
+    else{m.setStyle({fillOpacity:0.06,opacity:0.06});}
   });
 }
 
 function filterMatch(place) {
-  if (activeFilter === 'visited' && !state.visited[place.id]) return false;
-  if (activeFilter === 'wishlist' && !state.wishlist[place.id]) return false;
-  if (activeFilter !== 'all' && activeFilter !== 'visited' && activeFilter !== 'wishlist') {
-    if (place.type !== activeFilter) return false;
+  if(activeFilter==='visited'&&!state.visited[place.id]) return false;
+  if(activeFilter==='wishlist'&&!state.wishlist[place.id]) return false;
+  if(activeFilter==='custom'&&!place.isCustom) return false;
+  if(activeFilter!=='all'&&activeFilter!=='visited'&&activeFilter!=='wishlist'&&activeFilter!=='custom'){
+    if(place.type!==activeFilter) return false;
   }
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    if (!place.name.toLowerCase().includes(q) && !place.region.toLowerCase().includes(q) && !(place.province||'').toLowerCase().includes(q)) return false;
+  if(searchQuery){
+    const q=searchQuery.toLowerCase();
+    if(!place.name.toLowerCase().includes(q)&&!(place.region||'').toLowerCase().includes(q)) return false;
   }
   return true;
 }
 
 function buildPopup(place) {
-  const isV = state.visited[place.id];
-  const isW = state.wishlist[place.id];
-  return `<div class="popup-content">
-    <h4>${place.name}</h4>
-    <p>${place.region} · ${place.type.charAt(0).toUpperCase()+place.type.slice(1)}</p>
+  const isV=state.visited[place.id],isW=state.wishlist[place.id];
+  const typeIcon={cascata:'💧',fiume:'🌊','luna park':'🎡',natura:'🌿',fantasma:'👻',città:'🏙️',borgo:'🏘️',paese:'🏡',spiaggia:'🏖️',montagna:'⛰️',custom:'⭐'}[place.type]||'📍';
+  return`<div class="popup-content">
+    <h4>${typeIcon} ${place.name}</h4>
+    <p>${place.region||''}${place.type?' · '+typeLabel(place.type):''}</p>
     <div class="popup-actions">
-      <button class="popup-btn v${isV?' active':''}" onclick="toggleVisited('${place.id}')">❤️ Stato</button>
-      <button class="popup-btn w${isW?' active':''}" onclick="toggleWishlist('${place.id}')">⭐ Sogno</button>
-      <button class="popup-btn d" onclick="openDetail('${place.id}')">📖 Dettagli</button>
+      <button class="popup-btn v${isV?' active':''}" onclick="toggleVisited('${place.id}')">❤️ ${isV?'Visitato':'Visita'}</button>
+      <button class="popup-btn w${isW?' active':''}" onclick="toggleWishlist('${place.id}')">⭐ ${isW?'Sogno!':'Sogno'}</button>
+      <button class="popup-btn d" onclick="openDetail('${place.id}')">📖 Info</button>
     </div>
   </div>`;
 }
 
 function refreshPopup(id) {
-  const place = PLACES_DB.find(p=>p.id===id);
-  if (!place) return;
+  const place=allPlaces().find(p=>p.id===id); if(!place) return;
   markers[id]?.setPopupContent(buildPopup(place));
   markers[id]?.setStyle(getMarkerStyle(place));
 }
 
-// ================== DETAIL PANEL ==================
+// ====== GEOLOCATION ======
+function geolocateMe() {
+  const pulse=document.getElementById('geo-pulse');
+  pulse.style.display='block';
+  pulse.textContent='📡 Ricerca GPS in corso...';
+  if(!navigator.geolocation){pulse.textContent='⚠️ GPS non disponibile';setTimeout(()=>pulse.style.display='none',3000);return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const{latitude:lat,longitude:lng,accuracy}=pos.coords;
+    map.setView([lat,lng],14,{animate:true});
+    if(gpsMarker) map.removeLayer(gpsMarker);
+    gpsMarker=L.marker([lat,lng],{
+      icon:L.divIcon({
+        html:`<div class="gps-dot-outer"><div class="gps-dot-inner"></div></div>`,
+        iconSize:[20,20],iconAnchor:[10,10],className:''
+      })
+    }).addTo(map);
+    // Find nearest place
+    let nearest=null,minDist=Infinity;
+    allPlaces().forEach(p=>{
+      const d=Math.sqrt(Math.pow(p.lat-lat,2)+Math.pow(p.lng-lng,2));
+      if(d<minDist){minDist=d;nearest=p;}
+    });
+    const accText=accuracy<50?'precisione alta':accuracy<200?'precisione media':'precisione bassa';
+    if(nearest&&minDist<0.15){
+      pulse.textContent=`📍 Sei vicino a ${nearest.name}! ❤️`;
+      gpsMarker.bindPopup(`<div class="popup-content"><h4>📍 Siete qui!</h4><p>${accText}</p><p>Vicino a: <strong>${nearest.name}</strong></p><div class="popup-actions"><button class="popup-btn v" onclick="toggleVisited('${nearest.id}');map.closePopup()">❤️ Segna visitato</button></div></div>`).openPopup();
+    } else {
+      pulse.textContent=`📍 Posizione trovata (${accText})`;
+      gpsMarker.bindPopup(`<div class="popup-content"><h4>📍 Siete qui!</h4><p>${accText}</p><p style="margin-top:4px"><button class="popup-btn d" onclick="openAddPlaceAtCoords(${lat},${lng})">➕ Aggiungi questo posto</button></p></div>`).openPopup();
+    }
+    setTimeout(()=>pulse.style.display='none',4000);
+  },err=>{
+    const msgs={1:'GPS bloccato — abilita la posizione',2:'Segnale GPS assente',3:'Timeout GPS'};
+    pulse.textContent='⚠️ '+(msgs[err.code]||'Errore GPS');
+    setTimeout(()=>pulse.style.display='none',3000);
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+}
+
+// ====== ADD PLACE ======
+function openAddPlace() { document.getElementById('add-modal').classList.add('open'); }
+function openAddPlaceAtCoords(lat,lng) {
+  document.getElementById('add-lat').value=lat.toFixed(6);
+  document.getElementById('add-lng').value=lng.toFixed(6);
+  document.getElementById('gps-status-add').textContent=`📍 Coordinate impostate: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  openAddPlace();
+}
+function closeAddModal() {
+  document.getElementById('add-modal').classList.remove('open');
+  document.getElementById('add-name').value='';
+  document.getElementById('add-region').value='';
+  document.getElementById('add-lat').value='';
+  document.getElementById('add-lng').value='';
+  document.getElementById('gps-status-add').textContent='';
+}
+function getGPSForNewPlace() {
+  const status=document.getElementById('gps-status-add');
+  status.textContent='📡 Ricerca GPS...';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    document.getElementById('add-lat').value=pos.coords.latitude.toFixed(6);
+    document.getElementById('add-lng').value=pos.coords.longitude.toFixed(6);
+    status.textContent=`✅ Posizione trovata! (${pos.coords.accuracy.toFixed(0)}m di precisione)`;
+  },()=>{status.textContent='⚠️ GPS non disponibile, inserisci le coordinate manualmente';},{enableHighAccuracy:true,timeout:8000});
+}
+function saveNewPlace() {
+  const name=document.getElementById('add-name').value.trim();
+  const region=document.getElementById('add-region').value.trim();
+  const type=document.getElementById('add-type').value;
+  const lat=parseFloat(document.getElementById('add-lat').value);
+  const lng=parseFloat(document.getElementById('add-lng').value);
+  if(!name){showToast('⚠️ Inserisci il nome del luogo');return;}
+  if(isNaN(lat)||isNaN(lng)){showToast('⚠️ Inserisci le coordinate o usa il GPS');return;}
+  if(lat<36||lat>48||lng<6||lng>19){showToast('⚠️ Le coordinate non sembrano in Italia');return;}
+  const newPlace={
+    id:'custom_'+Date.now(),name,region:region||'Italia',type,lat,lng,isCustom:true
+  };
+  state.customPlaces.push(newPlace);
+  saveState();
+  addMarker(newPlace);
+  updateMarkers();
+  renderList();
+  updateCounters();
+  map.setView([lat,lng],13,{animate:true});
+  markers[newPlace.id]?.openPopup();
+  closeAddModal();
+  showToast(`✅ "${name}" aggiunto alla mappa! ❤️`);
+}
+
+// ====== DETAIL PANEL ======
 function openDetail(id) {
-  const place = PLACES_DB.find(p=>p.id===id);
-  if (!place) return;
-  currentDetailId = id;
-
-  document.getElementById('dp-name').textContent = place.name;
-  document.getElementById('dp-meta').innerHTML = `
-    <span>${place.region}</span>
-    <span>·</span>
-    <span>${place.province ? place.province+' · ' : ''}${typeLabel(place.type)}</span>
-  `;
-
-  const isV = state.visited[id];
-  const isW = state.wishlist[id];
-
-  document.getElementById('dp-actions').innerHTML = `
-    <button class="dpbtn visited-btn${isV?' active':''}" onclick="toggleVisited('${id}')">
-      ${isV ? '❤️ Visitato insieme!' : '❤️ Segna come visitato'}
-    </button>
-    <button class="dpbtn wish-btn${isW?' active':''}" onclick="toggleWishlist('${id}')">
-      ${isW ? '⭐ Nel vostro sogno!' : '⭐ Aggiungi ai sogni'}
-    </button>
-    <button class="dpbtn close-btn" onclick="closeDetail()">✕</button>
-  `;
-
-  const noteArea = document.getElementById('detail-note-area');
-  noteArea.classList.add('show');
-  document.getElementById('dp-note').value = state.notes[id] || '';
-  const d = state.noteDates?.[id];
-  document.getElementById('dp-note-date').textContent = d ? `Salvato il ${d}` : '';
-
+  const place=allPlaces().find(p=>p.id===id); if(!place) return;
+  currentDetailId=id;
+  const typeIcon={cascata:'💧',fiume:'🌊','luna park':'🎡',natura:'🌿',fantasma:'👻',città:'🏙️',borgo:'🏘️',paese:'🏡',spiaggia:'🏖️',montagna:'⛰️',custom:'⭐'}[place.type]||'📍';
+  document.getElementById('dp-name').textContent=typeIcon+' '+place.name;
+  document.getElementById('dp-meta').innerHTML=`<span>${place.region||''}</span><span>·</span><span>${typeLabel(place.type)}</span>${place.isCustom?'<span style="color:var(--blue);font-size:0.65rem">· Luogo personale</span>':''}`;
+  const isV=state.visited[id],isW=state.wishlist[id];
+  document.getElementById('dp-actions').innerHTML=`
+    <button class="dpbtn visited-btn${isV?' active':''}" onclick="toggleVisited('${id}')">${isV?'❤️ Visitato!':'❤️ Segna visitato'}</button>
+    <button class="dpbtn wish-btn${isW?' active':''}" onclick="toggleWishlist('${id}')">${isW?'⭐ Nei sogni!':'⭐ Aggiungi ai sogni'}</button>
+    ${place.isCustom?`<button class="dpbtn delete-btn" onclick="deleteCustomPlace('${id}')">🗑️ Elimina</button>`:''}
+    <button class="dpbtn close-btn" onclick="closeDetail()">✕</button>`;
+  document.getElementById('detail-note-area').classList.add('show');
+  document.getElementById('dp-note').value=state.notes[id]||'';
+  const d=state.noteDates?.[id];
+  document.getElementById('dp-note-date').textContent=d?`Salvato il ${d}`:'';
   document.getElementById('detail-panel').classList.add('open');
+  map.setView([place.lat,place.lng],Math.max(map.getZoom(),11),{animate:true});
+}
+function closeDetail(){document.getElementById('detail-panel').classList.remove('open');currentDetailId=null;}
+function saveNote(){
+  if(!currentDetailId) return;
+  const val=document.getElementById('dp-note').value.trim();
+  if(val){state.notes[currentDetailId]=val;if(!state.noteDates)state.noteDates={};state.noteDates[currentDetailId]=new Date().toLocaleDateString('it-IT');}
+  else{delete state.notes[currentDetailId];delete(state.noteDates||{})[currentDetailId];}
+  saveState();renderList();
+  showToast(val?'✍️ Ricordo salvato ❤️':'Nota rimossa');
+  document.getElementById('dp-note-date').textContent=val?`Salvato il ${state.noteDates[currentDetailId]}`:'';
+}
+function deleteCustomPlace(id){
+  if(!confirm('Vuoi eliminare questo luogo?')) return;
+  state.customPlaces=state.customPlaces.filter(p=>p.id!==id);
+  if(markers[id]){map.removeLayer(markers[id]);delete markers[id];}
+  delete state.visited[id];delete state.wishlist[id];delete state.notes[id];
+  saveState();closeDetail();renderList();updateCounters();
+  showToast('Luogo eliminato');
+}
+function typeLabel(t){const l={città:'Città',borgo:'Borgo',paese:'Paese',natura:'Natura',fantasma:'Paese Fantasma',cascata:'Cascata',fiume:'Fiume / Lago','luna park':'Luna Park',spiaggia:'Spiaggia',montagna:'Montagna',custom:'Personale',altro:'Altro'};return l[t]||(t?t.charAt(0).toUpperCase()+t.slice(1):'');}
 
-  // Fly to marker
-  map.setView([place.lat, place.lng], Math.max(map.getZoom(), 10), { animate: true });
+// ====== VISITED / WISHLIST ======
+function toggleVisited(id){
+  if(state.visited[id]){delete state.visited[id];showToast('Rimosso dai visitati');}
+  else{state.visited[id]=true;delete state.wishlist[id];showToast('❤️ Luogo visitato insieme!');}
+  saveState();updateMarkers();refreshPopup(id);
+  if(currentDetailId===id) openDetail(id);
+  renderList();updateCounters();
+}
+function toggleWishlist(id){
+  if(state.wishlist[id]){delete state.wishlist[id];showToast('Rimosso dai sogni');}
+  else{state.wishlist[id]=true;delete state.visited[id];showToast('⭐ Aggiunto ai sogni!');}
+  saveState();updateMarkers();refreshPopup(id);
+  if(currentDetailId===id) openDetail(id);
+  renderList();updateCounters();
+}
+function updateCounters(){
+  document.getElementById('cnt-visited').textContent=Object.keys(state.visited).length;
+  document.getElementById('cnt-wishlist').textContent=Object.keys(state.wishlist).length;
 }
 
-function closeDetail() {
-  document.getElementById('detail-panel').classList.remove('open');
-  currentDetailId = null;
-}
-
-function saveNote() {
-  if (!currentDetailId) return;
-  const val = document.getElementById('dp-note').value.trim();
-  if (val) {
-    state.notes[currentDetailId] = val;
-    state.noteDates = state.noteDates || {};
-    state.noteDates[currentDetailId] = new Date().toLocaleDateString('it-IT');
-  } else {
-    delete state.notes[currentDetailId];
-    delete (state.noteDates||{})[currentDetailId];
-  }
-  saveState();
-  renderList();
-  showToast(val ? '✍️ Ricordo salvato con amore ❤️' : 'Nota rimossa');
-  document.getElementById('dp-note-date').textContent = val ? `Salvato il ${state.noteDates[currentDetailId]}` : '';
-}
-
-function typeLabel(type) {
-  const labels = { città:'Città', borgo:'Borgo', paese:'Paese', natura:'Natura', fantasma:'Paese Fantasma', frazione:'Frazione' };
-  return labels[type] || type.charAt(0).toUpperCase()+type.slice(1);
-}
-
-// ================== VISITED / WISHLIST ==================
-function toggleVisited(id) {
-  if (state.visited[id]) {
-    delete state.visited[id];
-    showToast('Rimosso dai luoghi visitati');
-  } else {
-    state.visited[id] = true;
-    delete state.wishlist[id]; // cant be both
-    showToast('❤️ Luogo visitato insieme!');
-  }
-  saveState();
-  updateMarkers();
-  refreshPopup(id);
-  if (currentDetailId === id) openDetail(id);
-  renderList();
-  updateCounters();
-}
-
-function toggleWishlist(id) {
-  if (state.wishlist[id]) {
-    delete state.wishlist[id];
-    showToast('Rimosso dai sogni');
-  } else {
-    state.wishlist[id] = true;
-    delete state.visited[id];
-    showToast('⭐ Aggiunto ai sogni!');
-  }
-  saveState();
-  updateMarkers();
-  refreshPopup(id);
-  if (currentDetailId === id) openDetail(id);
-  renderList();
-  updateCounters();
-}
-
-function updateCounters() {
-  document.getElementById('cnt-visited').textContent = Object.keys(state.visited).length;
-  document.getElementById('cnt-wishlist').textContent = Object.keys(state.wishlist).length;
-}
-
-// ================== SIDEBAR LIST ==================
-function renderList() {
-  const list = document.getElementById('places-list');
-  const filtered = PLACES_DB.filter(filterMatch);
-  document.getElementById('list-count').textContent = `${filtered.length} luoghi`;
-
-  // Sort: visited first, then wishlist, then alpha
-  filtered.sort((a,b) => {
-    const av = state.visited[a.id]?2:state.wishlist[a.id]?1:0;
-    const bv = state.visited[b.id]?2:state.wishlist[b.id]?1:0;
-    if (bv !== av) return bv - av;
-    return a.name.localeCompare(b.name, 'it');
+// ====== SIDEBAR LIST ======
+function renderList(){
+  const list=document.getElementById('places-list');
+  const filtered=allPlaces().filter(filterMatch);
+  filtered.sort((a,b)=>{
+    const av=state.visited[a.id]?2:state.wishlist[a.id]?1:0;
+    const bv=state.visited[b.id]?2:state.wishlist[b.id]?1:0;
+    if(bv!==av) return bv-av;
+    return a.name.localeCompare(b.name,'it');
   });
-
-  list.innerHTML = filtered.slice(0, 80).map(place => {
-    const isV = state.visited[place.id];
-    const isW = state.wishlist[place.id];
-    const note = state.notes[place.id];
-    return `<div class="place-item${isV?' visited':''}" onclick="openDetail('${place.id}')">
-      <div class="place-check${isV?' visited':isW?' wishlist':''}" onclick="event.stopPropagation();${isV?`toggleVisited('${place.id}')`:`toggleVisited('${place.id}')`}">
-        ${isV?'<svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1"/></svg>':isW?'★':''}
+  document.getElementById('list-count').textContent=`${filtered.length} luoghi`;
+  const typeIcon={cascata:'💧',fiume:'🌊','luna park':'🎡',natura:'🌿',fantasma:'👻',città:'🏙️',borgo:'🏘️',paese:'🏡',spiaggia:'🏖️',montagna:'⛰️',custom:'⭐'};
+  list.innerHTML=filtered.slice(0,100).map(place=>{
+    const isV=state.visited[place.id],isW=state.wishlist[place.id],note=state.notes[place.id];
+    const icon=typeIcon[place.type]||'📍';
+    return`<div class="place-item${place.isCustom?' custom-place':''}" onclick="openDetail('${place.id}')">
+      <div class="place-check${isV?' visited':isW?' wishlist':''}" onclick="event.stopPropagation();toggleVisited('${place.id}')">
+        ${isV?'<svg viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="2" fill="none"/></svg>':isW?'★':''}
       </div>
       <div class="place-info">
-        <div class="place-name">${place.name}</div>
-        <div class="place-meta">
-          <span>${place.region}</span>
-          <span class="place-type-badge">${typeLabel(place.type)}</span>
-        </div>
+        <div class="place-name">${icon} ${place.name}</div>
+        <div class="place-meta"><span>${place.region||''}</span><span class="place-type-badge">${typeLabel(place.type)}</span></div>
         ${note?`<div class="place-note-preview">✍️ ${note}</div>`:''}
       </div>
       <button class="place-go-btn" onclick="event.stopPropagation();goToPlace('${place.id}')">→</button>
     </div>`;
-  }).join('') + (filtered.length > 80 ? `<div style="text-align:center;padding:12px;font-size:0.72rem;color:#a89060">+ altri ${filtered.length-80} luoghi — usa la ricerca per filtrare</div>` : '');
+  }).join('')+(filtered.length>100?`<div style="text-align:center;padding:10px;font-size:0.7rem;color:#a89060">+ altri ${filtered.length-100} — usa la ricerca</div>`:'');
 }
-
-function goToPlace(id) {
-  const place = PLACES_DB.find(p=>p.id===id);
-  if (!place) return;
-  map.setView([place.lat, place.lng], 12, { animate: true });
+function goToPlace(id){
+  const place=allPlaces().find(p=>p.id===id);if(!place) return;
+  map.setView([place.lat,place.lng],12,{animate:true});
   markers[id]?.openPopup();
 }
+function flyToItaly(){map.flyTo([42.5,12.5],6,{animate:true,duration:1.5});}
 
-// ================== GEOLOCATION ==================
-function geolocateMe() {
-  const pulse = document.getElementById('geo-pulse');
-  pulse.style.display = 'block';
-  pulse.textContent = '📡 Cercando la vostra posizione...';
-
-  navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude, longitude } = pos.coords;
-    map.setView([latitude, longitude], 13, { animate: true });
-
-    // Find nearest place
-    let nearest = null, minDist = Infinity;
-    PLACES_DB.forEach(p => {
-      const d = Math.sqrt(Math.pow(p.lat-latitude,2)+Math.pow(p.lng-longitude,2));
-      if (d < minDist) { minDist = d; nearest = p; }
-    });
-
-    L.marker([latitude, longitude], {
-      icon: L.divIcon({
-        html: '<div style="background:#c0392b;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px rgba(192,57,43,0.3),0 2px 8px rgba(0,0,0,0.3)"></div>',
-        iconSize: [16,16], iconAnchor: [8,8]
-      })
-    }).addTo(map).bindPopup(`<div class="popup-content"><h4>📍 Siete qui!</h4><p>Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}</p>${nearest?`<p style="margin-top:4px">Vicino a: <strong>${nearest.name}</strong></p>`:''}</div>`).openPopup();
-
-    pulse.textContent = nearest ? `📍 Siete vicino a ${nearest.name}! ❤️` : '📍 Posizione trovata!';
-    setTimeout(() => { pulse.style.display = 'none'; }, 4000);
-
-    if (nearest && minDist < 0.3) {
-      showToast(`Sei a ${nearest.name}! Vuoi segnarlo come visitato? ❤️`);
-    }
-  }, err => {
-    pulse.textContent = '⚠️ Posizione non disponibile';
-    setTimeout(() => { pulse.style.display = 'none'; }, 2500);
-  }, { enableHighAccuracy: true, timeout: 8000 });
+// ====== SHARE / SYNC ======
+function getShareURL(){
+  updateURLHash();
+  return window.location.href.split('#')[0]+window.location.hash;
 }
-
-function flyToItaly() {
-  map.flyTo([42.5, 12.5], 6, { animate: true, duration: 1.5 });
-}
-
-// ================== SHARE ==================
-function openShare() {
-  const url = window.location.href.split('#')[0] + window.location.hash;
-  document.getElementById('share-link-text').textContent = url;
+function openShare(){
+  document.getElementById('share-link-text').textContent=getShareURL();
   document.getElementById('share-modal').classList.add('open');
 }
-function closeShare() { document.getElementById('share-modal').classList.remove('open'); }
-function copyShareLink() {
-  const url = window.location.href.split('#')[0] + window.location.hash;
-  navigator.clipboard?.writeText(url).then(() => showToast('💌 Link copiato! Invialo alla tua fidanzata ❤️'));
+function closeShare(){document.getElementById('share-modal').classList.remove('open');}
+function copyShareLink(){
+  navigator.clipboard?.writeText(getShareURL()).then(()=>showToast('📋 Link copiato!'));
+  closeShare();
+}
+function shareWhatsApp(){
+  const url=getShareURL();
+  const msg=encodeURIComponent(`❤️ La nostra mappa d'Italia aggiornata! Aprila per vedere tutti i posti che abbiamo visitato e i nostri sogni 🗺️\n\n${url}`);
+  window.open(`https://wa.me/?text=${msg}`,'_blank');
   closeShare();
 }
 
-// ================== STATS ==================
-const QUOTES = [
-  "«Non dove siamo, ma dove andiamo insieme» ❤️",
-  "«Ogni viaggio è un ricordo che dura per sempre» 🌹",
-  "«L'Italia è bella, ma con te è meravigliosa» ✨",
-  "«Mano nella mano, paese dopo paese» 💑",
-  "«Il mondo è grande, ma il nostro cuore è qui» 🗺️",
-];
-
-function openStats() {
-  const nV = Object.keys(state.visited).length;
-  const nW = Object.keys(state.wishlist).length;
-  const nN = Object.keys(state.notes).length;
-  const regions = [...new Set(PLACES_DB.filter(p=>state.visited[p.id]).map(p=>p.region))].length;
-  const types = {};
-  PLACES_DB.filter(p=>state.visited[p.id]).forEach(p=>{ types[p.type]=(types[p.type]||0)+1; });
-  const favType = Object.entries(types).sort((a,b)=>b[1]-a[1])[0];
-
-  document.getElementById('stats-grid').innerHTML = `
-    <div class="stat-card"><span class="stat-num">${nV}</span><span class="stat-lbl">Luoghi visitati</span></div>
-    <div class="stat-card"><span class="stat-num">${nW}</span><span class="stat-lbl">Sogni nel cassetto</span></div>
-    <div class="stat-card"><span class="stat-num">${regions}</span><span class="stat-lbl">Regioni esplorate</span></div>
+// ====== STATS ======
+const QUOTES=["«Non dove siamo, ma dove andiamo insieme» ❤️","«Ogni viaggio è un ricordo che dura per sempre» 🌹","«L'Italia è bella, ma con te è meravigliosa» ✨","«Mano nella mano, paese dopo paese» 💑","«Il mondo è grande, ma il nostro cuore è qui» 🗺️"];
+function openStats(){
+  const nV=Object.keys(state.visited).length,nW=Object.keys(state.wishlist).length;
+  const nN=Object.keys(state.notes).length,nC=state.customPlaces.length;
+  const regions=[...new Set(allPlaces().filter(p=>state.visited[p.id]).map(p=>p.region))].length;
+  const types={};allPlaces().filter(p=>state.visited[p.id]).forEach(p=>{types[p.type]=(types[p.type]||0)+1;});
+  const favType=Object.entries(types).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card"><span class="stat-num">${nV}</span><span class="stat-lbl">Visitati</span></div>
+    <div class="stat-card"><span class="stat-num">${nW}</span><span class="stat-lbl">Sogni</span></div>
+    <div class="stat-card"><span class="stat-num">${regions}</span><span class="stat-lbl">Regioni</span></div>
     <div class="stat-card"><span class="stat-num">${nN}</span><span class="stat-lbl">Ricordi scritti</span></div>
-    ${favType?`<div class="stat-card" style="grid-column:span 2"><span class="stat-num" style="font-size:1.2rem">${typeLabel(favType[0])}</span><span class="stat-lbl">Tipo di luogo preferito (${favType[1]} visite)</span></div>`:''}
-  `;
-  document.getElementById('stats-quote').textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+    <div class="stat-card"><span class="stat-num">${nC}</span><span class="stat-lbl">Luoghi aggiunti</span></div>
+    ${favType?`<div class="stat-card"><span class="stat-num" style="font-size:1rem">${typeLabel(favType[0])}</span><span class="stat-lbl">Preferito (${favType[1]}x)</span></div>`:''}`;
+  document.getElementById('stats-quote').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)];
   document.getElementById('stats-modal').classList.add('open');
 }
 
-// ================== SEARCH & FILTER ==================
-document.getElementById('search-input').addEventListener('input', function() {
-  searchQuery = this.value.trim();
-  renderList();
-  updateMarkers();
-});
-
-document.querySelectorAll('.ftab').forEach(btn => {
-  btn.addEventListener('click', function() {
+// ====== SEARCH & FILTER ======
+document.getElementById('search-input').addEventListener('input',function(){searchQuery=this.value.trim();renderList();updateMarkers();});
+document.querySelectorAll('.ftab').forEach(btn=>{
+  btn.addEventListener('click',function(){
     document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
-    this.classList.add('active');
-    activeFilter = this.dataset.filter;
-    renderList();
-    updateMarkers();
+    this.classList.add('active');activeFilter=this.dataset.filter;renderList();updateMarkers();
   });
 });
 
-// ================== TOAST ==================
+// ====== TOAST ======
 let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ================== INIT ==================
-function startApp() {
-  if (typeof L === 'undefined') {
-    document.getElementById('loading-overlay').innerHTML = '<h2 style="color:#c0392b;font-family:serif">⚠️ Errore di rete</h2><p style="color:#a89070">Controlla la connessione e ricarica la pagina</p>';
+// ====== INIT ======
+function startApp(){
+  if(typeof L==='undefined'){
+    document.getElementById('loading-overlay').innerHTML='<h2 style="color:#c0392b;font-family:serif">⚠️ Errore di rete</h2><p style="color:#a89070">Controlla la connessione e ricarica</p>';
     return;
   }
-  loadState();
-  loadFromHash();
-  initMap();
-  renderList();
-  updateCounters();
+  loadState();loadFromHash();initMap();renderList();updateCounters();
   setTimeout(()=>{
-    document.getElementById('loading-overlay').style.opacity = '0';
-    document.getElementById('loading-overlay').style.transition = 'opacity 0.6s';
-    setTimeout(()=> document.getElementById('loading-overlay').style.display='none', 600);
-  }, 2200);
+    const o=document.getElementById('loading-overlay');
+    o.style.opacity='0';o.style.transition='opacity 0.6s';
+    setTimeout(()=>o.style.display='none',600);
+  },2000);
 }
 </script>
 
@@ -1259,14 +763,7 @@ function startApp() {
   onerror="this.onerror=null;this.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'">
 </script>
 <script>
-  (function waitForLeaflet(attempts) {
-    if (typeof L !== 'undefined') { startApp(); return; }
-    if (attempts <= 0) {
-      document.getElementById('loading-overlay').innerHTML = '<h2 style="color:#c0392b;font-family:serif">⚠️ Errore</h2><p style="color:#a89070">Ricarica la pagina con connessione attiva</p>';
-      return;
-    }
-    setTimeout(() => waitForLeaflet(attempts - 1), 300);
-  })(20);
+(function wait(n){typeof L!=='undefined'?startApp():n>0?setTimeout(()=>wait(n-1),300):document.getElementById('loading-overlay').innerHTML='<h2 style="color:#c0392b;font-family:serif">⚠️ Errore</h2><p style="color:#a89070">Ricarica con connessione attiva</p>';})(25);
 </script>
 </body>
 </html>
